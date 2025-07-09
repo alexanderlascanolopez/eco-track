@@ -279,7 +279,7 @@
               </div>
 
               <div class="table-responsive">
-                <table class="table datanew" id="table">
+                <table class="table datanew text-center" id="table">
                   <thead>
                     <tr>
                       <th>
@@ -291,6 +291,7 @@
                       <th>Email</th>
                       <th>Role</th>
                       <th>Status</th>
+                      <th>Allowed to change password</th>
                       <th>Created On</th>
                       <th class="no-export">Action</th>
                     </tr>
@@ -325,9 +326,10 @@
                           <div class="col-lg-4 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Email</label>
-                              <input type="text" id="email" disabled/>
+                              <input type="text" id="email" disabled />
                             </div>
                           </div>
+                        
                           <div class="col-lg-4 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Role</label>
@@ -337,6 +339,7 @@
                               </select>
                             </div>
                           </div>
+                        
                           <div class="col-lg-4 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Status</label>
@@ -346,6 +349,13 @@
                                 <option value="restricted">Restricted</option>
                               </select>
                             </div>
+                          </div>
+                        </div>
+                        
+                        <div class="form-group mt-3">
+                          <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="isallowtoedit" />
+                            <label class="form-check-label" for="togglePasswordUpdate">Is allowed to change Password.</label>
                           </div>
                         </div>
                       </form>
@@ -531,131 +541,6 @@
       await showUnreadNotifications(); // show unread count
     </script>
 
-    <script>
-      const supabaseUrl = "https://lkdkcdgbfzxyvlldldwe.supabase.co";
-      const supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrZGtjZGdiZnp4eXZsbGRsZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTkzMzksImV4cCI6MjA2NTE3NTMzOX0.oNEeMo0lWJ5EXNBjTec5GqP2khoIoOiEMf0wfWBAdw8";
-      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          console.log("User is signed in:", session.user.email);
-        } else {
-          console.log("No active session");
-          window.location.href = "signin.html";
-        }
-      });
-
-      // checking user if restricted
-      async function userStatus(){
-        const { data: { user } } = await supabase.auth.getUser();
-
-        const { data: profile, error } = await supabase
-          .from("users")
-          .select("status")
-          .eq("id", user.id)
-          .single();
-
-        if (profile?.status === "restricted") {
-          alert("Your account has been restricted. Contact admin.");
-          const { error } = await supabase.auth.signOut();
-          if (error) {
-            console.error("Sign out error:", error.message);
-            alert("Sign out failed: " + error.message);
-          } else {
-            window.location.href = "signin.html";
-          }
-        }
-      }
-      userStatus();
-
-      async function fetchUser(id) {
-
-        const { data, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", id)
-          .single();
-
-        if (error) {
-          console.error("Error fetching user:", error.message);
-          return;
-        }
-
-        const modal = document.getElementById("userModal");
-
-        if (modal.style.display === "block") {
-          document.getElementById("email").value = data.email || "";
-          document.getElementById("role").value = data.role || "";
-          document.getElementById("status").value = data.status || "";
-        }
-
-        document
-          .getElementById("userForm")
-          .addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const updatedData = {
-              role: document.getElementById("role").value,
-              status: document.getElementById("status").value,
-            };
-
-            const { error: updateError } = await supabase
-              .from("users")
-              .update(updatedData)
-              .eq("id", id);
-
-            if (updateError) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Submit";
-              alert("Failed to update. Please try again.");
-              return;
-            }
-
-            submitBtn.innerHTML = "Submitted ✓";
-            submitBtn.classList.remove("btn-submit");
-            submitBtn.classList.add("btn-success");
-
-            setTimeout(() => {
-              document.getElementById("userForm").reset();
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = "Submit";
-              submitBtn.classList.remove("btn-success");
-              submitBtn.classList.add("btn-submit");
-            }, 2000);
-            window.location.href = "settings.html";
-          });
-      }
-
-      async function deleteUser(id) {
-        const { error1 } = await supabase.from("users").delete().eq("id", id);
-
-        if (error1) {
-          console.error(
-            "Error deleting user from users table:",
-            error1.message
-          );
-        }
-
-        const { error2 } = await supabase.auth.admin.deleteUser(id);
-
-        if (error2) {
-          console.error("Error deleting from auth.users:", error2.message);
-        }
-      }
-
-      async function signOut() {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-          console.error("Sign out error:", error.message);
-          alert("Sign out failed: " + error.message);
-        } else {
-          console.log("Signed out successfully");
-          window.location.href = "signin.html";
-        }
-      }
-    </script>
-
     <script type="module">
       import supabase from "./assets/js/supabase.js";
 
@@ -683,6 +568,7 @@
                 <td>${user.email}</td>
                 <td>${user.role}</td>
                 <td><span class="${user.status == "active" ? "bg-lightgreen badges" : "bg-lightred badges"} ">${user.status}</span></td>
+                <td><span class="${user.is_allowed_to_edit == true ? "bg-lightgreen badges" : "bg-lightred badges"} ">${user.is_allowed_to_edit}</span></td>
                 <td>${user.created_at.split("T")[0]}</td>
                 <td class="no-export">
                   ${user.role == "staff" ? `<button
@@ -706,6 +592,269 @@
 
       fetchUsers();
     </script>
+
+    <script>
+      const supabaseUrl = "https://lkdkcdgbfzxyvlldldwe.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrZGtjZGdiZnp4eXZsbGRsZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTkzMzksImV4cCI6MjA2NTE3NTMzOX0.oNEeMo0lWJ5EXNBjTec5GqP2khoIoOiEMf0wfWBAdw8";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          console.log("User is signed in:", session.user.email);
+        } else {
+          console.log("No active session");
+          window.location.href = "signin.html";
+        }
+      });
+
+      // checking user if restricted
+      async function userStatus(){
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { data: profile, error } = await supabase
+          .from("users")
+          .select("status")
+          .eq("id", user.id)
+          .single();
+
+        if (profile?.status === "restricted") {
+          // alert("Your account has been restricted. Contact admin.");
+          Swal.fire({
+            icon: "info",
+            title: "Notice!!!",
+            text: "Your account has been restricted. Contact admin.",
+          });
+          const { error } = await supabase.auth.signOut();
+          if (error) {
+            console.error("Sign out error:", error.message);
+            alert("Sign out failed: " + error.message);
+          } else {
+            window.location.href = "signin.html";
+          }
+        }
+      }
+      userStatus();
+
+      // checking user if restricted
+      async function isAllowedToEdit(){
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { data: profile, error } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (profile.role == "staff") {
+          window.location.href = "index.html";
+        }
+      }
+      isAllowedToEdit();  
+
+      async function fetchUser(id) {  
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching user:", error.message);
+          return;
+        }
+
+        document.getElementById("email").value = data.email || "";
+        document.getElementById("role").value = data.role || "";
+        document.getElementById("status").value = data.status || "";
+        document.getElementById("isallowtoedit").checked = data.is_allowed_to_edit;
+
+        // Toggle show/hide password fields
+        // const toggleCheckbox = document.getElementById("togglePasswordUpdate");
+        // const passwordFields = document.getElementById("passwordFields");
+
+        // toggleCheckbox.addEventListener("change", () => {
+        //   passwordFields.style.display = toggleCheckbox.checked ? "block" : "none";
+        // });
+
+        document.getElementById("userForm").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const submitBtn = document.getElementById("submitBtn");
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = "Updating...";
+
+          const updatedData = {
+            role: document.getElementById("role").value,
+            status: document.getElementById("status").value,
+            is_allowed_to_edit: document.getElementById("isallowtoedit").checked,
+          };
+
+          // First update role and status
+          const { error: updateError } = await supabase
+            .from("users")
+            .update(updatedData)
+            .eq("id", id);
+
+          if (updateError) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit";
+            alert("Failed to update. Please try again.");
+            return;
+          }
+
+          // // Then, update password if requested
+          // if (toggleCheckbox.checked) {
+          //   const newPassword = document.getElementById("newPassword").value.trim();
+          //   const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+          //   if (!newPassword || !confirmPassword) {
+          //     Swal.fire({
+          //       icon: "warning",
+          //       title: "Missing Password",
+          //       text: "Please fill out both password fields.",
+          //     });
+          //     submitBtn.disabled = false;
+          //     submitBtn.textContent = "Submit";
+          //     return;
+          //   }
+
+            // if (newPassword.length < 6) {
+            //   Swal.fire({
+            //     icon: "info",
+            //     title: "Password Too Short",
+            //     text: "Password should be at least 6 characters.",
+            //   });
+            //   submitBtn.disabled = false;
+            //   submitBtn.textContent = "Submit";
+            //   return;
+            // }
+
+            // if (newPassword !== confirmPassword || newPassword.length < 6) {
+            //   Swal.fire({
+            //     icon: "error",
+            //     title: "Password Mismatch",
+            //     text: "New password and confirmation do not match.",
+            //   });
+            //   submitBtn.disabled = false;
+            //   submitBtn.textContent = "Submit";
+            //   return;
+            // }
+
+            // const { error: pwError } = await supabase.auth.admin.updateUserById(id, {
+            //   password: newPassword,
+            // });
+
+            // if (pwError) {
+            //   alert("Password update failed: " + pwError.message);
+            //   submitBtn.disabled = false;
+            //   submitBtn.textContent = "Submit";
+            //   return;
+            // }
+          // }
+
+          submitBtn.innerHTML = "Submitted ✓";
+          submitBtn.classList.remove("btn-submit");
+          submitBtn.classList.add("btn-success");
+
+          setTimeout(() => {
+            document.getElementById("userForm").reset();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = "Submit";
+            submitBtn.classList.remove("btn-success");
+            submitBtn.classList.add("btn-submit");
+          }, 2000);
+
+          window.location.href = "settings.html";
+        });
+      }
+
+
+      // async function fetchUser() {
+        // const { data, error } = await supabase
+        //   .from("users")
+        //   .select("*")
+        //   .eq("id", id)
+        //   .single();
+
+        // if (error) {
+        //   console.error("Error fetching user:", error.message);
+        //   return;
+        // }
+
+        // const modal = document.getElementById("userModal");
+
+        // if (modal.style.display === "block") {
+        //   document.getElementById("email").value = data.email || "";
+        //   document.getElementById("role").value = data.role || "";
+        //   document.getElementById("status").value = data.status || "";
+        // }
+
+        // document
+        //   .getElementById("userForm")
+        //   .addEventListener("submit", async (e) => {
+        //     e.preventDefault();
+
+        //     const updatedData = {
+        //       role: document.getElementById("role").value,
+        //       status: document.getElementById("status").value,
+        //     };
+
+          //   const { error: updateError } = await supabase
+          //     .from("users")
+          //     .update(updatedData)
+          //     .eq("id", id);
+
+          //   if (updateError) {
+          //     submitBtn.disabled = false;
+          //     submitBtn.textContent = "Submit";
+          //     alert("Failed to update. Please try again.");
+          //     return;
+          //   }
+
+          //   submitBtn.innerHTML = "Submitted ✓";
+          //   submitBtn.classList.remove("btn-submit");
+          //   submitBtn.classList.add("btn-success");
+
+          //   setTimeout(() => {
+          //     document.getElementById("userForm").reset();
+          //     submitBtn.disabled = false;
+          //     submitBtn.innerHTML = "Submit";
+          //     submitBtn.classList.remove("btn-success");
+          //     submitBtn.classList.add("btn-submit");
+          //   }, 2000);
+          //   window.location.href = "settings.html";
+          // });
+      // }
+
+      async function deleteUser(id) {
+        const { error1 } = await supabase.from("users").delete().eq("id", id);
+
+        if (error1) {
+          console.error(
+            "Error deleting user from users table:",
+            error1.message
+          );
+        }
+
+        const { error2 } = await supabase.auth.admin.deleteUser(id);
+
+        if (error2) {
+          console.error("Error deleting from auth.users:", error2.message);
+        }
+      }
+
+      async function signOut() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("Sign out error:", error.message);
+          Swal.fire("Sign out failed", error.message, "error");
+        } else {
+          console.log("Signed out successfully");
+          window.location.href = "signin.html";
+        }
+      }
+    </script>
+
 
     <script>
       function exportToExcel() {

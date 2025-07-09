@@ -251,8 +251,8 @@
                     <div class="form-group">
                       <label>Password</label>
                       <div class="pass-group">
-                        <input type="password" id="password" class="form-control pass-input" required />
-                        <span class="fas toggle-password fa-eye-slash"></span>
+                        <input type="password" id="password" class="pass-input" required/>
+                        <span class="fas toggle-password toggle-password1 fa-eye-slash"></span>
                       </div>
                     </div>
                   </div>
@@ -313,23 +313,53 @@
           .single();
 
         if (profile?.status === "restricted") {
-          alert("Your account has been restricted. Contact admin.");
-          const { error } = await supabase.auth.signOut();
-          if (error) {
-            console.error("Sign out error:", error.message);
-            alert("Sign out failed: " + error.message);
-          } else {
-            window.location.href = "signin.html";
-          }
+          Swal.fire({
+              icon: "info",
+              title: "Notice!!!",
+              text: "Your account has been restricted. Contact admin.",
+              timer: 4000,
+              showConfirmButton: true,
+              timerProgressBar: true,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              didOpen: () => {
+                Swal.showLoading();
+              },
+              willClose: async () => {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                  console.error("Sign out error:", error.message);
+                  Swal.fire("Sign out failed", error.message, "error");
+                } else {
+                  window.location.href = "signin.html";
+                }
+              }
+            });
         }
       }
       userStatus();
+
+      // checking user if restricted
+      async function isAllowedToEdit(){
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { data: profile, error } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (profile?.role == "staff") {
+          window.location.href = "index.html";
+        }
+      }
+      isAllowedToEdit();
 
       async function signOut() {
         const { error } = await supabase.auth.signOut();
         if (error) {
           console.error("Sign out error:", error.message);
-          alert("Sign out failed: " + error.message);
+          Swal.fire("Sign out failed", error.message, "error");
         } else {
           console.log("Signed out successfully");
           window.location.href = "signin.html";

@@ -159,8 +159,12 @@
             ><i class="fa fa-ellipsis-v"></i
           ></a>
           <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="profile.html">My Profile</a>
-            <a class="dropdown-item" href="settings.html">Settings</a>
+            <a class="dropdown-item" href="profile.html" id="profileLink2">
+              My Profile
+            </a>
+            <a class="dropdown-item" href="settings.html" id="settingsLink2">
+              Settings
+            </a>
             <button style="line-height: 30px;padding: 8px 10px" class="dropdown-item" onclick="signOut()">
               Logout
             </button>
@@ -400,7 +404,7 @@
         // Fetch custom role from your `users` table
         const { data: userData } = await supabase
           .from("users") // change if your table is named differently
-          .select("role")
+          .select("*")
           .eq("id", user.id)
           .single();
 
@@ -410,8 +414,13 @@
 
         // Hide profile/settings for non-admin
         if (userData?.role !== "admin") {
-          document.getElementById("profileLink").style.display = "none";
           document.getElementById("settingsLink").style.display = "none";
+          document.getElementById("settingsLink2").style.display = "none";
+        }
+
+        if (!userData?.is_allowed_to_edit) {
+          document.getElementById("profileLink").style.display = "none";
+          document.getElementById("profileLink2").style.display = "none";
         }
       }
       setUserDropdown();

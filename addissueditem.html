@@ -158,8 +158,12 @@
             ><i class="fa fa-ellipsis-v"></i
           ></a>
           <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="profile.html">My Profile</a>
-            <a class="dropdown-item" href="settings.html">Settings</a>
+            <a class="dropdown-item" href="profile.html" id="profileLink2">
+              My Profile
+            </a>
+            <a class="dropdown-item" href="settings.html" id="settingsLink2">
+              Settings
+            </a>
             <button style="line-height: 30px;padding: 8px 10px" class="dropdown-item" onclick="signOut()">
               Logout
             </button>
@@ -302,6 +306,7 @@
                           placeholder="DD-MM-YYYY"
                           class="datetimepicker"
                           id="date"
+                          required
                         />
                         <div class="addonset">
                           <img src="assets/img/icons/calendars.svg" alt="img" />
@@ -343,7 +348,7 @@
         // Fetch custom role from your `users` table
         const { data: userData } = await supabase
           .from("users") // change if your table is named differently
-          .select("role")
+          .select("*")
           .eq("id", user.id)
           .single();
 
@@ -353,8 +358,13 @@
 
         // Hide profile/settings for non-admin
         if (userData?.role !== "admin") {
-          document.getElementById("profileLink").style.display = "none";
           document.getElementById("settingsLink").style.display = "none";
+          document.getElementById("settingsLink2").style.display = "none";
+        }
+
+        if (!userData?.is_allowed_to_edit) {
+          document.getElementById("profileLink").style.display = "none";
+          document.getElementById("profileLink2").style.display = "none";
         }
       }
       setUserDropdown();
@@ -607,14 +617,28 @@
           .single();
 
         if (profile?.status === "restricted") {
-          alert("Your account has been restricted. Contact admin.");
-          const { error } = await supabase.auth.signOut();
-          if (error) {
-            console.error("Sign out error:", error.message);
-            alert("Sign out failed: " + error.message);
-          } else {
-            window.location.href = "signin.html";
-          }
+          Swal.fire({
+              icon: "info",
+              title: "Notice!!!",
+              text: "Your account has been restricted. Contact admin.",
+              timer: 4000,
+              showConfirmButton: true,
+              timerProgressBar: true,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              didOpen: () => {
+                Swal.showLoading();
+              },
+              willClose: async () => {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                  console.error("Sign out error:", error.message);
+                  Swal.fire("Sign out failed", error.message, "error");
+                } else {
+                  window.location.href = "signin.html";
+                }
+              }
+            });
         }
       }
       userStatus();
@@ -623,7 +647,7 @@
         const { error } = await supabase.auth.signOut();
         if (error) {
           console.error("Sign out error:", error.message);
-          alert("Sign out failed: " + error.message);
+          Swal.fire("Sign out failed", error.message, "error");
         } else {
           console.log("Signed out successfully");
           window.location.href = "signin.html";

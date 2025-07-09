@@ -156,8 +156,12 @@
             ><i class="fa fa-ellipsis-v"></i
           ></a>
           <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="profile.html">My Profile</a>
-            <a class="dropdown-item" href="settings.html">Settings</a>
+            <a class="dropdown-item" href="profile.html" id="profileLink2">
+              My Profile
+            </a>
+            <a class="dropdown-item" href="settings.html" id="settingsLink2">
+              Settings
+            </a>
             <button style="line-height: 30px;padding: 8px 10px" class="dropdown-item" onclick="signOut()">
               Logout
             </button>
@@ -235,7 +239,7 @@
           <div class="page-header">
             <div class="page-title">
               <h4>Profile</h4>
-              <h6>Role: Admin</h6>
+              <h6>Role: <span class="userRole"></span> </h6>
             </div>
           </div>
 
@@ -308,18 +312,24 @@
         // Fetch custom role from your `users` table
         const { data: userData } = await supabase
           .from("users") // change if your table is named differently
-          .select("role")
+          .select("*")
           .eq("id", user.id)
           .single();
-
+          
         // Show email and role
+        document.querySelector(".userRole").textContent = userData?.role;
         document.getElementById("userEmail").textContent = user.email;
         document.getElementById("userRole").textContent = userData?.role || 'Unknown';
 
         // Hide profile/settings for non-admin
         if (userData?.role !== "admin") {
-          document.getElementById("profileLink").style.display = "none";
           document.getElementById("settingsLink").style.display = "none";
+          document.getElementById("settingsLink2").style.display = "none";
+        }
+
+        if (!userData?.is_allowed_to_edit) {
+          document.getElementById("profileLink").style.display = "none";
+          document.getElementById("profileLink2").style.display = "none";
         }
       }
       setUserDropdown();
@@ -469,17 +479,47 @@
           .single();
 
         if (profile?.status === "restricted") {
-          alert("Your account has been restricted. Contact admin.");
-          const { error } = await supabase.auth.signOut();
-          if (error) {
-            console.error("Sign out error:", error.message);
-            alert("Sign out failed: " + error.message);
-          } else {
-            window.location.href = "signin.html";
-          }
+          Swal.fire({
+              icon: "info",
+              title: "Notice!!!",
+              text: "Your account has been restricted. Contact admin.",
+              timer: 4000,
+              showConfirmButton: true,
+              timerProgressBar: true,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              didOpen: () => {
+                Swal.showLoading();
+              },
+              willClose: async () => {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                  console.error("Sign out error:", error.message);
+                  Swal.fire("Sign out failed", error.message, "error");
+                } else {
+                  window.location.href = "signin.html";
+                }
+              }
+            });
         }
       }
       userStatus();
+
+      // checking user if restricted
+      async function isAllowedToEdit(){
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { data: profile, error } = await supabase
+          .from("users")
+          .select("is_allowed_to_edit")
+          .eq("id", user.id)
+          .single();
+
+        if (!profile?.is_allowed_to_edit) {
+          window.location.href = "index.html";
+        }
+      }
+      isAllowedToEdit();
 
       document.addEventListener('DOMContentLoaded', async () => {
         const { data: { user }, error } = await supabase.auth.getUser();
@@ -499,37 +539,57 @@
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
+        const newPassword = document.getElementById("password").value;
         const confirmPassword =
           document.getElementById("confirmPassword").value;
 
-        // Input validation
-        if (password && password !== confirmPassword) {
-          alert("Passwords do not match.");
-          return;
-        }
+            if (!newPassword || !confirmPassword) {
+              Swal.fire({
+                icon: "warning",
+                title: "Missing Password",
+                text: "Please fill out both password fields.",
+              });
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit";
+              return;
+            }
 
-        if (password && password.length < 6) {
-          alert("Password must be at least 6 characters long.");
-          return;
-        }
+            if (newPassword.length < 6) {
+              Swal.fire({
+                icon: "info",
+                title: "Password Too Short",
+                text: "Password should be at least 6 characters.",
+              });
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit";
+              return;
+            }
+
+            if (newPassword !== confirmPassword || newPassword.length < 6) {
+              Swal.fire({
+                icon: "error",
+                title: "Password Mismatch",
+                text: "New password and confirmation do not match.",
+              });
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit";
+              return;
+            }
 
         // Prepare update payload
         const updateData = {};
         if (email) updateData.email = email;
-        if (password) updateData.password = password;
-
-        // Proceed only if there's something to update
-        if (Object.keys(updateData).length === 0) {
-          alert("Please provide an email or password to update.");
-          return;
-        }
+        if (password) updateData.password = newPassword;
 
         // Call Supabase to update user
         const { data, error } = await supabase.auth.updateUser(updateData);
 
         if (error) {
-          alert("Update failed: " + error.message);
+          Swal.fire({
+            icon: "error",
+            title: "Error Update",
+            text: "Failed to update. Please try again.",
+          });
           submitBtn.disabled = false;
           submitBtn.textContent = "Submit";
           alert("Failed to update. Please try again.");
@@ -554,7 +614,7 @@
         const { error } = await supabase.auth.signOut();
         if (error) {
           console.error("Sign out error:", error.message);
-          alert("Sign out failed: " + error.message);
+          Swal.fire("Sign out failed", error.message, "error");
         } else {
           console.log("Signed out successfully");
           window.location.href = "signin.html";
