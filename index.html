@@ -34,6 +34,58 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css" />
 
     <link rel="stylesheet" href="assets/css/style.css" />
+
+    <style>
+      /* Sidebar transition */
+      .sidebar {
+        width: 260px;
+        transition: all 0.3s ease;
+      }
+
+      /* Collapsed sidebar */
+      .sidebar.collapsed {
+        width: 70px;
+      }
+
+      .sidebar.collapsed .sidebar-menu ul li a span {
+        display: none; /* hide text labels */
+      }
+
+      .sidebar.collapsed .submenu ul {
+        display: none; /* hide submenus */
+      }
+
+      .sidebar.collapsed img {
+        margin: 0 auto;
+        display: block;
+      }
+
+      /* Adjust content area */
+      .page-wrapper {
+        transition: margin-left 0.3s ease;
+        margin-left: 250px;
+      }
+
+      .page-wrapper.expanded {
+        margin-left: 70px;
+      }
+
+      /* Sidebar toggle button */
+      #sidebarToggle {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 20px;
+        color: #333;
+        margin-right: 10px;
+      }
+
+      #sidebarToggle:hover {
+        color: #0d6efd;
+      }
+    </style>
+
+
   </head>
   <body>
     <div id="global-loader">
@@ -42,14 +94,19 @@
 
     <div class="main-wrapper">
       <div class="header">
-        <div class="header-left active">
-          <a href="index.html" class="logo">
-            <h1>Eco-Track</h1>
+        <div class="header-left active d-flex align-items-center">
+          <button id="sidebarToggle" title="Toggle sidebar" class="ms-2">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="index.html" class="logo me-3">
+            <h2>Eco-Track</h2>
           </a>
           <a href="index.html" class="logo-small">
-            <img src="assets/img/logo-small.png" alt="" />
+            <img src="assets/img/favicon.jpg" alt="" />
           </a>
+          
         </div>
+
 
         <a id="mobile_btn" class="mobile_btn" href="#sidebar">
           <span class="bar-icon">
@@ -234,7 +291,11 @@
           
           <div class="row" id="categoryStatsContainer">
             <!-- Dynamically generated per category via JS -->
+
           </div>
+          <!-- Add this inside your HTML, below your categoryStatsContainer -->
+          <canvas id="categoryStatsChart" style="max-height: 400px;"></canvas>
+
           <div class="row">
             <div class="card flex-fill">
               <div
@@ -317,6 +378,7 @@
                       <th>Quantity</th>
                       <th>Purpose of Issuance</th>
                       <th>Status</th>
+                      <th>Issued To</th>
                       <th>Date</th>
                     </tr>
                   </thead>
@@ -331,6 +393,68 @@
       </div>
     </div>
 
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        const pageWrapper = document.querySelector(".page-wrapper");
+        const toggleBtn = document.getElementById("sidebarToggle");
+        let tooltipInstances = [];
+
+        // Initialize or destroy tooltips
+        function manageTooltips(enable) {
+          const sidebarItems = sidebar.querySelectorAll(".sidebar-menu ul li");
+
+          if (enable) {
+            // Add tooltip attributes and initialize Bootstrap tooltips
+            sidebarItems.forEach(li => {
+              const linkText = li.querySelector("span")?.innerText?.trim();
+              if (linkText) {
+                li.setAttribute("data-bs-toggle", "tooltip");
+                li.setAttribute("data-bs-placement", "right");
+                li.setAttribute("title", linkText);
+              }
+            });
+
+            tooltipInstances = Array.from(
+              document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            ).map(el => new bootstrap.Tooltip(el));
+          } else {
+            // Dispose tooltips and remove attributes
+            tooltipInstances.forEach(instance => instance.dispose());
+            tooltipInstances = [];
+
+            sidebarItems.forEach(li => {
+              li.removeAttribute("data-bs-toggle");
+              li.removeAttribute("data-bs-placement");
+              li.removeAttribute("title");
+            });
+          }
+        }
+
+        // Toggle sidebar collapse
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("collapsed");
+          pageWrapper.classList.toggle("expanded");
+
+          const isCollapsed = sidebar.classList.contains("collapsed");
+          manageTooltips(isCollapsed);
+
+          localStorage.setItem("sidebarCollapsed", isCollapsed);
+        });
+
+        // Restore saved state
+        const isCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
+        if (isCollapsed) {
+          sidebar.classList.add("collapsed");
+          pageWrapper.classList.add("expanded");
+        }
+
+        // Initialize tooltips based on saved state
+        manageTooltips(isCollapsed);
+      });
+    </script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
@@ -338,8 +462,8 @@
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrZGtjZGdiZnp4eXZsbGRsZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTkzMzksImV4cCI6MjA2NTE3NTMzOX0.oNEeMo0lWJ5EXNBjTec5GqP2khoIoOiEMf0wfWBAdw8';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // checking session
-        supabase.auth.getSession().then(({ data: { session } }) => {
+      // checking session
+      supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           console.log("User is signed in:", session.user.email);
         } else {
@@ -399,7 +523,7 @@
     </script>
     
     <!-- fetch total instock and issued items -->
-    <script type="module">
+    <!-- <script type="module">
       import supabase from "./assets/js/supabase.js";
     
       async function fetchCategoryStats() {
@@ -460,8 +584,116 @@
       }
     
       fetchCategoryStats();
-    </script>
+    </script> -->
     
+    <!-- Add Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module">
+      import supabase from "./assets/js/supabase.js";
+
+      async function fetchCategoryStats() {
+        const { data: categories, error } = await supabase
+          .from("category")
+          .select("*");
+
+        if (error) {
+          console.error("Fetch error:", error);
+          return;
+        }
+
+        const categoryLabels = [];
+        const totalInStockArr = [];
+        const totalIssuedArr = [];
+        const totalReturnedArr = [];
+
+        // Loop through categories
+        for (const category of categories) {
+          const [{ data: itemData }, { data: issuedItemData }, { data: returnedItemData }] =
+            await Promise.all([
+              supabase.from("item quantity").select("quantity").eq("category_id", category.id),
+              supabase.from("issued item quantity").select("quantity").eq("category_id", category.id),
+              supabase.from("returned issued item quantity").select("quantity").eq("category_id", category.id),
+            ]);
+
+          const totalItem = itemData?.reduce((sum, row) => sum + row.quantity, 0) || 0;
+          const totalIssued = issuedItemData?.reduce((sum, row) => sum + row.quantity, 0) || 0;
+          const totalReturned = returnedItemData?.reduce((sum, row) => sum + row.quantity, 0) || 0;
+
+          const result = totalItem - (totalIssued - totalReturned);
+
+          categoryLabels.push(category.category_name);
+          totalInStockArr.push(result);
+          totalIssuedArr.push(totalIssued);
+          totalReturnedArr.push(totalReturned);
+        }
+
+        // Render Chart
+        renderCategoryChart(categoryLabels, totalInStockArr, totalIssuedArr, totalReturnedArr);
+      }
+
+      function renderCategoryChart(labels, inStock, issued, returned) {
+        const ctx = document.getElementById("categoryStatsChart").getContext("2d");
+
+        // Destroy existing chart if re-rendering
+        if (window.categoryChart) {
+          window.categoryChart.destroy();
+        }
+
+        window.categoryChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Total In-Stock",
+                data: inStock,
+                backgroundColor: "rgba(54, 162, 235, 0.6)",
+              },
+              {
+                label: "Total Issued",
+                data: issued,
+                backgroundColor: "rgba(255, 99, 132, 0.6)",
+              },
+              {
+                label: "Total Returned",
+                data: returned,
+                backgroundColor: "rgba(75, 192, 192, 0.6)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Inventory Summary per Category",
+              },
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Category",
+                },
+              },
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Quantity",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      fetchCategoryStats();
+    </script>
     
     <!-- fetch Items -->
     <script type="module">
@@ -590,6 +822,7 @@
                 <td>${issueditem.quantity}</td>
                 <td>${issueditem.purpose_of_issuance}</td>
                 <td>${issueditem.status}</td>
+                <td>${issueditem.issued_to}</td>
                 <td>${issueditem.date.split("T")[0]}</td>
               </tr>
             `);

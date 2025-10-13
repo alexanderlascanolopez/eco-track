@@ -36,6 +36,56 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css" />
 
     <link rel="stylesheet" href="assets/css/style.css" />
+
+        <style>
+      /* Sidebar transition */
+      .sidebar {
+        width: 260px;
+        transition: all 0.3s ease;
+      }
+
+      /* Collapsed sidebar */
+      .sidebar.collapsed {
+        width: 70px;
+      }
+
+      .sidebar.collapsed .sidebar-menu ul li a span {
+        display: none; /* hide text labels */
+      }
+
+      .sidebar.collapsed .submenu ul {
+        display: none; /* hide submenus */
+      }
+
+      .sidebar.collapsed img {
+        margin: 0 auto;
+        display: block;
+      }
+
+      /* Adjust content area */
+      .page-wrapper {
+        transition: margin-left 0.3s ease;
+        margin-left: 250px;
+      }
+
+      .page-wrapper.expanded {
+        margin-left: 70px;
+      }
+
+      /* Sidebar toggle button */
+      #sidebarToggle {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 20px;
+        color: #333;
+        margin-right: 10px;
+      }
+
+      #sidebarToggle:hover {
+        color: #0d6efd;
+      }
+    </style>
   </head>
   <body>
     <div id="global-loader">
@@ -44,13 +94,17 @@
 
     <div class="main-wrapper">
       <div class="header">
-        <div class="header-left active">
-          <a href="index.html" class="logo">
-            <h1>Eco-Track</h1>
+        <div class="header-left active d-flex align-items-center">
+          <button id="sidebarToggle" title="Toggle sidebar" class="ms-2">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="index.html" class="logo me-3">
+            <h2>Eco-Track</h2>
           </a>
           <a href="index.html" class="logo-small">
-            <img src="assets/img/logo-small.png" alt="" />
+            <img src="assets/img/favicon.jpg" alt="" />
           </a>
+          
         </div>
 
         <a id="mobile_btn" class="mobile_btn" href="#sidebar">
@@ -270,6 +324,68 @@
         </div>
       </div>
     </div>
+
+        <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        const pageWrapper = document.querySelector(".page-wrapper");
+        const toggleBtn = document.getElementById("sidebarToggle");
+        let tooltipInstances = [];
+
+        // Initialize or destroy tooltips
+        function manageTooltips(enable) {
+          const sidebarItems = sidebar.querySelectorAll(".sidebar-menu ul li");
+
+          if (enable) {
+            // Add tooltip attributes and initialize Bootstrap tooltips
+            sidebarItems.forEach(li => {
+              const linkText = li.querySelector("span")?.innerText?.trim();
+              if (linkText) {
+                li.setAttribute("data-bs-toggle", "tooltip");
+                li.setAttribute("data-bs-placement", "right");
+                li.setAttribute("title", linkText);
+              }
+            });
+
+            tooltipInstances = Array.from(
+              document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            ).map(el => new bootstrap.Tooltip(el));
+          } else {
+            // Dispose tooltips and remove attributes
+            tooltipInstances.forEach(instance => instance.dispose());
+            tooltipInstances = [];
+
+            sidebarItems.forEach(li => {
+              li.removeAttribute("data-bs-toggle");
+              li.removeAttribute("data-bs-placement");
+              li.removeAttribute("title");
+            });
+          }
+        }
+
+        // Toggle sidebar collapse
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("collapsed");
+          pageWrapper.classList.toggle("expanded");
+
+          const isCollapsed = sidebar.classList.contains("collapsed");
+          manageTooltips(isCollapsed);
+
+          localStorage.setItem("sidebarCollapsed", isCollapsed);
+        });
+
+        // Restore saved state
+        const isCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
+        if (isCollapsed) {
+          sidebar.classList.add("collapsed");
+          pageWrapper.classList.add("expanded");
+        }
+
+        // Initialize tooltips based on saved state
+        manageTooltips(isCollapsed);
+      });
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
