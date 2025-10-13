@@ -36,6 +36,9 @@
     <link rel="stylesheet" href="assets/css/style.css" />
 
     <style>
+
+      @media (min-width: 768px) {
+
       /* Sidebar transition */
       .sidebar {
         width: 260px;
@@ -69,8 +72,10 @@
       .page-wrapper.expanded {
         margin-left: 70px;
       }
+    }
 
       /* Sidebar toggle button */
+      /* Sidebar toggle button (desktop view) */
       #sidebarToggle {
         border: none;
         background: transparent;
@@ -78,11 +83,20 @@
         font-size: 20px;
         color: #333;
         margin-right: 10px;
+        transition: color 0.2s ease;
       }
 
       #sidebarToggle:hover {
         color: #0d6efd;
       }
+
+      /* Hide the toggle button on mobile view */
+      @media (max-width: 768px) {
+        #sidebarToggle {
+          display: none !important;
+        }
+      }
+
     </style>
 
 
