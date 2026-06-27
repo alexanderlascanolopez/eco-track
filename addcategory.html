@@ -404,17 +404,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script type="module">
-      import supabase from "./assets/js/supabase.js";
+    <script>
+      const supabaseUrl = "https://uajuxkdzabtdkalfoemp.supabase.co";
+      const supabaseKey = "sb_publishable_tLBAIrS4lA3P60ilVXBEHQ_LYafO3OW";
+      const supabaseClient = window.supabase.createClient(
+        supabaseUrl,
+        supabaseKey,
+      );
+    </script>
+
+    <script>
 
       // checking user
       async function setUserDropdown() {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
 
         if (error || !user) return;
 
         // Fetch custom role from your `users` table
-        const { data: userData } = await supabase
+        const { data: userData } = await supabaseClient
           .from("users") // change if your table is named differently
           .select("*")
           .eq("id", user.id)
@@ -439,7 +447,7 @@
 
       async function generateLowStockNotifications() {
         // 1. Fetch item list
-        const { data: items, error: itemError } = await supabase
+        const { data: items, error: itemError } = await supabaseClient
           .from("Item")
           .select("id, item_name, brand, category");
 
@@ -449,15 +457,15 @@
         }
 
         // 2. Fetch quantity sources
-        const { data: addedData } = await supabase
+        const { data: addedData } = await supabaseClient
           .from("item quantity")
           .select("item_id, quantity");
 
-        const { data: issuedData } = await supabase
+        const { data: issuedData } = await supabaseClient
           .from("issued item quantity")
           .select("item_id, quantity");
 
-        const { data: returnedData } = await supabase
+        const { data: returnedData } = await supabaseClient
           .from("returned issued item quantity")
           .select("item_id, quantity");
 
@@ -484,7 +492,7 @@
           const available = added - issued + returned;
 
           // Check if any previous notification exists for this item
-          const { data: existingNotifs, error: notifError } = await supabase
+          const { data: existingNotifs, error: notifError } = await supabaseClient
             .from("Notifications")
             .select("id, is_read")
             .eq("item_id", item_id)
@@ -498,7 +506,7 @@
             const alreadyHasUnread = existingNotif && !existingNotif.is_read;
 
             if (!existingNotif) {
-              await supabase.from("Notifications").insert([
+              await supabaseClient.from("Notifications").insert([
                 {
                   item_id,
                   item_name: item.item_name,
@@ -514,7 +522,7 @@
             // If an old notification exists and is already read, delete it
             if (existingNotif && existingNotif.is_read) {
               console.log(existingNotif.id);
-              await supabase.from("Notifications").delete().eq("id", existingNotif.id);
+              await supabaseClient.from("Notifications").delete().eq("id", existingNotif.id);
             }
           }
         }
@@ -523,7 +531,7 @@
 
 
       async function showUnreadNotifications() {
-        const { data: unread } = await supabase
+        const { data: unread } = await supabaseClient
           .from("Notifications")
           .select("*")
           .eq("is_read", false)
@@ -562,7 +570,7 @@
       .querySelector('.dropdown-toggle.nav-link')
       .addEventListener('click', async () => {
         // Mark all as read
-        await supabase
+        await supabaseClient
           .from("Notifications")
           .update({ is_read: true })
           .eq("is_read", false);
@@ -574,18 +582,15 @@
         // showUnreadNotifications(); // Optional: update list view
       });
 
-      await generateLowStockNotifications(); // check stock and add new ones
-      await showUnreadNotifications(); // show unread count
+      generateLowStockNotifications(); // check stock and add new ones
+      showUnreadNotifications(); // show unread count
 
     </script>
 
     <!-- add category and authentication -->
     <script>
-      const supabaseUrl = 'https://lkdkcdgbfzxyvlldldwe.supabase.co'
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrZGtjZGdiZnp4eXZsbGRsZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTkzMzksImV4cCI6MjA2NTE3NTMzOX0.oNEeMo0lWJ5EXNBjTec5GqP2khoIoOiEMf0wfWBAdw8';
-      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           console.log("User is signed in:", session.user.email);
         } else {
@@ -596,9 +601,9 @@
 
       // checking user if restricted
       async function userStatus(){
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await supabaseClient.auth.getUser();
 
-        const { data: profile, error } = await supabase
+        const { data: profile, error } = await supabaseClient
           .from("users")
           .select("status")
           .eq("id", user.id)
@@ -618,7 +623,7 @@
                 Swal.showLoading();
               },
               willClose: async () => {
-                const { error } = await supabase.auth.signOut();
+                const { error } = await supabaseClient.auth.signOut();
                 if (error) {
                   console.error("Sign out error:", error.message);
                   Swal.fire("Sign out failed", error.message, "error");
@@ -632,7 +637,7 @@
       userStatus();
 
       async function signOut() {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabaseClient.auth.signOut();
         if (error) {
           console.error("Sign out error:", error.message);
           Swal.fire("Sign out failed", error.message, "error");
@@ -653,7 +658,7 @@
         const category_name= document.getElementById("category_name").value.trim();
         const description = document.getElementById("description").value.trim();
 
-        const { error: insertError } = await supabase.from("category").insert([
+        const { error: insertError } = await supabaseClient.from("category").insert([
           {
             category_name,
             description,
@@ -712,8 +717,7 @@
       }, 0);
     </script>
 
-    <script type="module">
-      import supabase from "./assets/js/supabase.js";
+    <script>
 
       const searchInput = document.getElementById("searchInput");
       const resultBox = document.getElementById("global-search-results");
@@ -728,7 +732,7 @@
         const allMatches = [];
 
         // 1. Search Item table
-        const { data: items, error: itemError } = await supabase
+        const { data: items, error: itemError } = await supabaseClient
           .from("Item")
           .select("*")
           .ilike("item_name", `%${query}%`);
@@ -746,7 +750,7 @@
         }
 
         // 2. Search Category table
-        const { data: categories, error: catError } = await supabase
+        const { data: categories, error: catError } = await supabaseClient
           .from("category")
           .select("*")
           .ilike("category_name", `%${query}%`);
@@ -768,7 +772,7 @@
           const itemIds = items.map(i => i.id);
 
           // Issued Items
-          const { data: issued, error: issuedError } = await supabase
+          const { data: issued, error: issuedError } = await supabaseClient
             .from("issued item quantity")
             .select("item_id, quantity, date")
             .in("item_id", itemIds);
@@ -787,7 +791,7 @@
           }
 
           // Returned Issued Items
-          const { data: returned, error: returnedError } = await supabase
+          const { data: returned, error: returnedError } = await supabaseClient
             .from("returned issued item quantity")
             .select("item_id, quantity, date")
             .in("item_id", itemIds);

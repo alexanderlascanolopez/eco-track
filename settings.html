@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -40,43 +40,41 @@
     <link rel="stylesheet" href="assets/css/style.css" />
 
     <style>
-
       @media (min-width: 768px) {
+        /* Sidebar transition */
+        .sidebar {
+          width: 260px;
+          transition: all 0.3s ease;
+        }
 
-      /* Sidebar transition */
-      .sidebar {
-        width: 260px;
-        transition: all 0.3s ease;
-      }
+        /* Collapsed sidebar */
+        .sidebar.collapsed {
+          width: 70px;
+        }
 
-      /* Collapsed sidebar */
-      .sidebar.collapsed {
-        width: 70px;
-      }
+        .sidebar.collapsed .sidebar-menu ul li a span {
+          display: none; /* hide text labels */
+        }
 
-      .sidebar.collapsed .sidebar-menu ul li a span {
-        display: none; /* hide text labels */
-      }
+        .sidebar.collapsed .submenu ul {
+          display: none; /* hide submenus */
+        }
 
-      .sidebar.collapsed .submenu ul {
-        display: none; /* hide submenus */
-      }
+        .sidebar.collapsed img {
+          margin: 0 auto;
+          display: block;
+        }
 
-      .sidebar.collapsed img {
-        margin: 0 auto;
-        display: block;
-      }
+        /* Adjust content area */
+        .page-wrapper {
+          transition: margin-left 0.3s ease;
+          margin-left: 250px;
+        }
 
-      /* Adjust content area */
-      .page-wrapper {
-        transition: margin-left 0.3s ease;
-        margin-left: 250px;
+        .page-wrapper.expanded {
+          margin-left: 70px;
+        }
       }
-
-      .page-wrapper.expanded {
-        margin-left: 70px;
-      }
-    }
 
       /* Sidebar toggle button */
       /* Sidebar toggle button (desktop view) */
@@ -100,7 +98,6 @@
           display: none !important;
         }
       }
-
     </style>
   </head>
   <body>
@@ -120,15 +117,15 @@
           <a href="index.html" class="logo-small">
             <img src="assets/img/favicon.jpg" alt="" />
           </a>
-          
-        </div><div class="header-left active">
+        </div>
+        <!-- <div class="header-left active">
           <a href="index.html" class="logo">
             <h1>Eco-Track</h1>
           </a>
           <a href="index.html" class="logo-small">
             <img src="assets/img/logo-small.png" alt="" />
           </a>
-        </div>
+        </div> -->
 
         <a id="mobile_btn" class="mobile_btn" href="#sidebar">
           <span class="bar-icon">
@@ -146,8 +143,22 @@
               </a>
               <form action="#">
                 <div class="searchinputs">
-                  <input type="text" id="searchInput" placeholder="Search Here ..." />
-                  <div id="global-search-results" class="search-result-list" style="position: absolute; background: white; z-index: 1000; width: 100%; display: none;">
+                  <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search Here ..."
+                  />
+                  <div
+                    id="global-search-results"
+                    class="search-result-list"
+                    style="
+                      position: absolute;
+                      background: white;
+                      z-index: 1000;
+                      width: 100%;
+                      display: none;
+                    "
+                  >
                     <!-- Results will appear here -->
                   </div>
                   <div class="search-addon">
@@ -205,23 +216,30 @@
                   </div>
                 </div>
                 <hr class="m-0" />
-            
+
                 <!-- Admin-only links -->
                 <a class="dropdown-item" href="profile.html" id="profileLink">
                   <i class="me-2" data-feather="user"></i> My Profile
                 </a>
-                <a class="dropdown-item active" href="settings.html" id="settingsLink">
+                <a
+                  class="dropdown-item active"
+                  href="settings.html"
+                  id="settingsLink"
+                >
                   <i class="me-2" data-feather="settings"></i> Settings
                 </a>
-            
+
                 <hr class="m-0" />
                 <button class="dropdown-item logout pb-0" onclick="signOut()">
-                  <img src="assets/img/icons/log-out.svg" class="me-2" alt="Logout" />
+                  <img
+                    src="assets/img/icons/log-out.svg"
+                    class="me-2"
+                    alt="Logout"
+                  />
                   Logout
                 </button>
               </div>
             </div>
-            
           </li>
         </ul>
 
@@ -236,7 +254,11 @@
           <div class="dropdown-menu dropdown-menu-right">
             <a class="dropdown-item" href="profile.html">My Profile</a>
             <a class="dropdown-item" href="settings.html">Settings</a>
-            <button style="line-height: 30px;padding: 8px 10px" class="dropdown-item" onclick="signOut()">
+            <button
+              style="line-height: 30px; padding: 8px 10px"
+              class="dropdown-item"
+              onclick="signOut()"
+            >
               Logout
             </button>
           </div>
@@ -349,19 +371,22 @@
                 </div>
               </div>
 
-              <div id="loadingOverlay" style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255, 255, 255, 0.8);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-                display: none;
-              ">
+              <div
+                id="loadingOverlay"
+                style="
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  background: rgba(255, 255, 255, 0.8);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  z-index: 1000;
+                  display: none;
+                "
+              >
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
@@ -412,7 +437,7 @@
                               <input type="text" id="email" disabled />
                             </div>
                           </div>
-                        
+
                           <div class="col-lg-4 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Role</label>
@@ -422,7 +447,7 @@
                               </select>
                             </div>
                           </div>
-                        
+
                           <div class="col-lg-4 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Status</label>
@@ -434,11 +459,19 @@
                             </div>
                           </div>
                         </div>
-                        
+
                         <div class="form-group mt-3">
                           <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="isallowtoedit" />
-                            <label class="form-check-label" for="togglePasswordUpdate">Is allowed to change Password.</label>
+                            <input
+                              type="checkbox"
+                              class="form-check-input"
+                              id="isallowtoedit"
+                            />
+                            <label
+                              class="form-check-label"
+                              for="togglePasswordUpdate"
+                              >Is allowed to change Password.</label
+                            >
                           </div>
                         </div>
                       </form>
@@ -470,7 +503,7 @@
       </div>
     </div>
 
-        <script>
+    <script>
       document.addEventListener("DOMContentLoaded", () => {
         const sidebar = document.getElementById("sidebar");
         const pageWrapper = document.querySelector(".page-wrapper");
@@ -483,7 +516,7 @@
 
           if (enable) {
             // Add tooltip attributes and initialize Bootstrap tooltips
-            sidebarItems.forEach(li => {
+            sidebarItems.forEach((li) => {
               const linkText = li.querySelector("span")?.innerText?.trim();
               if (linkText) {
                 li.setAttribute("data-bs-toggle", "tooltip");
@@ -493,14 +526,14 @@
             });
 
             tooltipInstances = Array.from(
-              document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            ).map(el => new bootstrap.Tooltip(el));
+              document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+            ).map((el) => new bootstrap.Tooltip(el));
           } else {
             // Dispose tooltips and remove attributes
-            tooltipInstances.forEach(instance => instance.dispose());
+            tooltipInstances.forEach((instance) => instance.dispose());
             tooltipInstances = [];
 
-            sidebarItems.forEach(li => {
+            sidebarItems.forEach((li) => {
               li.removeAttribute("data-bs-toggle");
               li.removeAttribute("data-bs-placement");
               li.removeAttribute("title");
@@ -533,19 +566,28 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const supabaseUrl = "https://uajuxkdzabtdkalfoemp.supabase.co";
+      const supabaseKey = "sb_publishable_tLBAIrS4lA3P60ilVXBEHQ_LYafO3OW";
+      const supabaseClient = window.supabase.createClient(
+        supabaseUrl,
+        supabaseKey,
+      );
+    </script>
 
     <!-- notifications and profile -->
-    <script type="module">
-      import supabase from "./assets/js/supabase.js";
-
+    <script>
       // checking user
       async function setUserDropdown() {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error,
+        } = await supabaseClient.auth.getUser();
 
         if (error || !user) return;
 
         // Fetch custom role from your `users` table
-        const { data: userData } = await supabase
+        const { data: userData } = await supabaseClient
           .from("users") // change if your table is named differently
           .select("*")
           .eq("id", user.id)
@@ -553,7 +595,8 @@
 
         // Show email and role
         document.getElementById("userEmail").textContent = user.email;
-        document.getElementById("userRole").textContent = userData?.role || 'Unknown';
+        document.getElementById("userRole").textContent =
+          userData?.role || "Unknown";
 
         // Hide profile/settings for non-admin
         if (userData?.role !== "admin") {
@@ -570,7 +613,7 @@
 
       async function generateLowStockNotifications() {
         // 1. Fetch item list
-        const { data: items, error: itemError } = await supabase
+        const { data: items, error: itemError } = await supabaseClient
           .from("Item")
           .select("id, item_name, brand, category");
 
@@ -580,15 +623,15 @@
         }
 
         // 2. Fetch quantity sources
-        const { data: addedData } = await supabase
+        const { data: addedData } = await supabaseClient
           .from("item quantity")
           .select("item_id, quantity");
 
-        const { data: issuedData } = await supabase
+        const { data: issuedData } = await supabaseClient
           .from("issued item quantity")
           .select("item_id, quantity");
 
-        const { data: returnedData } = await supabase
+        const { data: returnedData } = await supabaseClient
           .from("returned issued item quantity")
           .select("item_id, quantity");
 
@@ -615,12 +658,13 @@
           const available = added - issued + returned;
 
           // Check if any previous notification exists for this item
-          const { data: existingNotifs, error: notifError } = await supabase
-            .from("Notifications")
-            .select("id, is_read")
-            .eq("item_id", item_id)
-            .order("created_at", { ascending: false })
-            .limit(1);
+          const { data: existingNotifs, error: notifError } =
+            await supabaseClient
+              .from("Notifications")
+              .select("id, is_read")
+              .eq("item_id", item_id)
+              .order("created_at", { ascending: false })
+              .limit(1);
 
           const existingNotif = existingNotifs?.[0];
 
@@ -629,7 +673,7 @@
             const alreadyHasUnread = existingNotif && !existingNotif.is_read;
 
             if (!existingNotif) {
-              await supabase.from("Notifications").insert([
+              await supabaseClient.from("Notifications").insert([
                 {
                   item_id,
                   item_name: item.item_name,
@@ -640,21 +684,21 @@
                 },
               ]);
             }
-          }
-          else {
+          } else {
             // If an old notification exists and is already read, delete it
             if (existingNotif && existingNotif.is_read) {
               console.log(existingNotif.id);
-              await supabase.from("Notifications").delete().eq("id", existingNotif.id);
+              await supabaseClient
+                .from("Notifications")
+                .delete()
+                .eq("id", existingNotif.id);
             }
           }
         }
       }
 
-
-
       async function showUnreadNotifications() {
-        const { data: unread } = await supabase
+        const { data: unread } = await supabaseClient
           .from("Notifications")
           .select("*")
           .eq("is_read", false)
@@ -663,11 +707,12 @@
         const notifList = document.getElementById("notifList");
         const badge = document.getElementById("notifBadge");
 
-        
-        badge.textContent = unread.length > 0 ? badge.classList.add("badge", "rounded-pill") : "";
+        badge.textContent =
+          unread.length > 0 ? badge.classList.add("badge", "rounded-pill") : "";
         badge.textContent = unread.length > 0 ? unread.length : "";
 
-        notifList.innerHTML = unread.slice(0, 4)
+        notifList.innerHTML = unread
+          .slice(0, 4)
           .map(
             (n) => `
             <li class="notification-message">
@@ -675,7 +720,7 @@
                 <div class="media d-flex">
                   <div class="media-body flex-grow-1">
                     <p class="noti-details">
-                      Low Stock: 
+                      Low Stock:
                       <span class="noti-title">${n.item_name}</span> (${n.category} - ${n.brand})
                     </p>
                     <p class="noti-time">
@@ -684,41 +729,39 @@
                   </div>
                 </div>
               </a>
-            </li>`
+            </li>`,
           )
           .join("");
       }
 
       document
-      .querySelector('.dropdown-toggle.nav-link')
-      .addEventListener('click', async () => {
-        // Mark all as read
-        await supabase
-          .from("Notifications")
-          .update({ is_read: true })
-          .eq("is_read", false);
+        .querySelector(".dropdown-toggle.nav-link")
+        .addEventListener("click", async () => {
+          // Mark all as read
+          await supabaseClient
+            .from("Notifications")
+            .update({ is_read: true })
+            .eq("is_read", false);
 
-        // Clear badge and reload
-        document.getElementById("notifBadge").textContent = "";
+          // Clear badge and reload
+          document.getElementById("notifBadge").textContent = "";
 
-        document.getElementById("notifBadge").classList.remove("badge", "rounded-pill");
-        // showUnreadNotifications(); // Optional: update list view
-      });
+          document
+            .getElementById("notifBadge")
+            .classList.remove("badge", "rounded-pill");
+          // showUnreadNotifications(); // Optional: update list view
+        });
 
-      await generateLowStockNotifications(); // check stock and add new ones
-      await showUnreadNotifications(); // show unread count
-
+      generateLowStockNotifications(); // check stock and add new ones
+      showUnreadNotifications(); // show unread count
     </script>
 
-    <script type="module">
-      import supabase from "./assets/js/supabase.js";
-
+    <script>
       async function fetchUsers() {
-
         const loading = document.getElementById("loadingOverlay");
         loading.style.display = "flex";
 
-        const { data, error } = await supabase.from("users").select("*");
+        const { data, error } = await supabaseClient.from("users").select("*");
 
         loading.style.display = "none";
 
@@ -740,7 +783,9 @@
                 <td><span class="${user.is_allowed_to_edit == true ? "bg-lightgreen badges" : "bg-lightred badges"} ">${user.is_allowed_to_edit}</span></td>
                 <td>${user.created_at.split("T")[0]}</td>
                 <td class="no-export">
-                  ${user.role == "staff" ? `<button
+                  ${
+                    user.role == "staff"
+                      ? `<button
                     class="me-3 btn-edit-user"
                     data-bs-toggle="modal" 
                     data-bs-target="#userModal"
@@ -749,7 +794,9 @@
                     style="background: none; border: none; padding: 0; cursor: pointer;"
                   >
                     <img src="assets/img/icons/edit.svg" alt="Edit" />
-                  </button>` : ""}
+                  </button>`
+                      : ""
+                  }
 
                 </td>
               </tr>
@@ -763,12 +810,7 @@
     </script>
 
     <script>
-      const supabaseUrl = "https://lkdkcdgbfzxyvlldldwe.supabase.co";
-      const supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrZGtjZGdiZnp4eXZsbGRsZHdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTkzMzksImV4cCI6MjA2NTE3NTMzOX0.oNEeMo0lWJ5EXNBjTec5GqP2khoIoOiEMf0wfWBAdw8";
-      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           console.log("User is signed in:", session.user.email);
         } else {
@@ -778,10 +820,12 @@
       });
 
       // checking user if restricted
-      async function userStatus(){
-        const { data: { user } } = await supabase.auth.getUser();
+      async function userStatus() {
+        const {
+          data: { user },
+        } = await supabaseClient.auth.getUser();
 
-        const { data: profile, error } = await supabase
+        const { data: profile, error } = await supabaseClient
           .from("users")
           .select("status")
           .eq("id", user.id)
@@ -794,7 +838,7 @@
             title: "Notice!!!",
             text: "Your account has been restricted. Contact admin.",
           });
-          const { error } = await supabase.auth.signOut();
+          const { error } = await supabaseClient.auth.signOut();
           if (error) {
             console.error("Sign out error:", error.message);
             alert("Sign out failed: " + error.message);
@@ -805,10 +849,12 @@
       }
       userStatus();
 
-      async function isAllowedToEdit(){
-        const { data: { user } } = await supabase.auth.getUser();
+      async function isAllowedToEdit() {
+        const {
+          data: { user },
+        } = await supabaseClient.auth.getUser();
 
-        const { data: profile, error } = await supabase
+        const { data: profile, error } = await supabaseClient
           .from("users")
           .select("role")
           .eq("id", user.id)
@@ -818,10 +864,10 @@
           window.location.href = "index.html";
         }
       }
-      isAllowedToEdit();  
+      isAllowedToEdit();
 
-      async function fetchUser(id) {  
-        const { data, error } = await supabase
+      async function fetchUser(id) {
+        const { data, error } = await supabaseClient
           .from("users")
           .select("*")
           .eq("id", id)
@@ -835,48 +881,52 @@
         document.getElementById("email").value = data.email || "";
         document.getElementById("role").value = data.role || "";
         document.getElementById("status").value = data.status || "";
-        document.getElementById("isallowtoedit").checked = data.is_allowed_to_edit;
+        document.getElementById("isallowtoedit").checked =
+          data.is_allowed_to_edit;
 
-        $("#userForm").off("submit").on("submit", async (e) => {
-          e.preventDefault();
-          const submitBtn = document.getElementById("submitBtn");
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = "Updating...";
+        $("#userForm")
+          .off("submit")
+          .on("submit", async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = "Updating...";
 
-          const updatedData = {
-            role: document.getElementById("role").value,
-            status: document.getElementById("status").value,
-            is_allowed_to_edit: document.getElementById("isallowtoedit").checked,
-          };
+            const updatedData = {
+              role: document.getElementById("role").value,
+              status: document.getElementById("status").value,
+              is_allowed_to_edit:
+                document.getElementById("isallowtoedit").checked,
+            };
 
-          // First update role and status
-          const { error: updateError } = await supabase
-            .from("users")
-            .update(updatedData)
-            .eq("id", id);
+            // First update role and status
+            const { error: updateError } = await supabaseClient
+              .from("users")
+              .update(updatedData)
+              .eq("id", id);
 
-          if (updateError) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Submit";
-            alert("Failed to update. Please try again.");
-            return;
-          }
+            if (updateError) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit";
+              alert("Failed to update. Please try again.");
+              return;
+            }
 
-          // // Then, update password if requested
-          // if (toggleCheckbox.checked) {
-          //   const newPassword = document.getElementById("newPassword").value.trim();
-          //   const confirmPassword = document.getElementById("confirmPassword").value.trim();
+            // // Then, update password if requested
+            // if (toggleCheckbox.checked) {
+            //   const newPassword = document.getElementById("newPassword").value.trim();
+            //   const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-          //   if (!newPassword || !confirmPassword) {
-          //     Swal.fire({
-          //       icon: "warning",
-          //       title: "Missing Password",
-          //       text: "Please fill out both password fields.",
-          //     });
-          //     submitBtn.disabled = false;
-          //     submitBtn.textContent = "Submit";
-          //     return;
-          //   }
+            //   if (!newPassword || !confirmPassword) {
+            //     Swal.fire({
+            //       icon: "warning",
+            //       title: "Missing Password",
+            //       text: "Please fill out both password fields.",
+            //     });
+            //     submitBtn.disabled = false;
+            //     submitBtn.textContent = "Submit";
+            //     return;
+            //   }
 
             // if (newPassword.length < 6) {
             //   Swal.fire({
@@ -900,7 +950,7 @@
             //   return;
             // }
 
-            // const { error: pwError } = await supabase.auth.admin.updateUserById(id, {
+            // const { error: pwError } = await supabaseClient.auth.admin.updateUserById(id, {
             //   password: newPassword,
             // });
 
@@ -910,35 +960,38 @@
             //   submitBtn.textContent = "Submit";
             //   return;
             // }
-          // }
+            // }
 
-          submitBtn.innerHTML = "Submitted ✓";
-          submitBtn.classList.remove("btn-submit");
-          submitBtn.classList.add("btn-success");
+            submitBtn.innerHTML = "Submitted ✓";
+            submitBtn.classList.remove("btn-submit");
+            submitBtn.classList.add("btn-success");
 
-          setTimeout(() => {
-            document.getElementById("userForm").reset();
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = "Submit";
-            submitBtn.classList.remove("btn-success");
-            submitBtn.classList.add("btn-submit");
-          }, 2000);
+            setTimeout(() => {
+              document.getElementById("userForm").reset();
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = "Submit";
+              submitBtn.classList.remove("btn-success");
+              submitBtn.classList.add("btn-submit");
+            }, 2000);
 
-          window.location.href = "settings.html";
-        });
+            window.location.href = "settings.html";
+          });
       }
 
       async function deleteUser(id) {
-        const { error1 } = await supabase.from("users").delete().eq("id", id);
+        const { error1 } = await supabaseClient
+          .from("users")
+          .delete()
+          .eq("id", id);
 
         if (error1) {
           console.error(
             "Error deleting user from users table:",
-            error1.message
+            error1.message,
           );
         }
 
-        const { error2 } = await supabase.auth.admin.deleteUser(id);
+        const { error2 } = await supabaseClient.auth.admin.deleteUser(id);
 
         if (error2) {
           console.error("Error deleting from auth.users:", error2.message);
@@ -946,7 +999,7 @@
       }
 
       async function signOut() {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabaseClient.auth.signOut();
         if (error) {
           console.error("Sign out error:", error.message);
           Swal.fire("Sign out failed", error.message, "error");
@@ -1011,9 +1064,7 @@
       }, 0);
     </script>
 
-    <script type="module">
-      import supabase from "./assets/js/supabase.js";
-
+    <script>
       const searchInput = document.getElementById("searchInput");
       const resultBox = document.getElementById("global-search-results");
 
@@ -1027,7 +1078,7 @@
         const allMatches = [];
 
         // 1. Search Item table
-        const { data: items, error: itemError } = await supabase
+        const { data: items, error: itemError } = await supabaseClient
           .from("Item")
           .select("*")
           .ilike("item_name", `%${query}%`);
@@ -1045,7 +1096,7 @@
         }
 
         // 2. Search Category table
-        const { data: categories, error: catError } = await supabase
+        const { data: categories, error: catError } = await supabaseClient
           .from("category")
           .select("*")
           .ilike("category_name", `%${query}%`);
@@ -1064,10 +1115,10 @@
 
         // 3. If items found, use their IDs to find issued and returned entries
         if (items?.length > 0) {
-          const itemIds = items.map(i => i.id);
+          const itemIds = items.map((i) => i.id);
 
           // Issued Items
-          const { data: issued, error: issuedError } = await supabase
+          const { data: issued, error: issuedError } = await supabaseClient
             .from("issued item quantity")
             .select("item_id, quantity, date")
             .in("item_id", itemIds);
@@ -1076,7 +1127,7 @@
             console.error("Issued item error:", issuedError.message);
           } else {
             for (const entry of issued) {
-              const matchedItem = items.find(i => i.id === entry.item_id);
+              const matchedItem = items.find((i) => i.id === entry.item_id);
               allMatches.push({
                 name: `${matchedItem.item_name} (Issued: ${entry.quantity})`,
                 page: "issueditem.html",
@@ -1086,7 +1137,7 @@
           }
 
           // Returned Issued Items
-          const { data: returned, error: returnedError } = await supabase
+          const { data: returned, error: returnedError } = await supabaseClient
             .from("returned issued item quantity")
             .select("item_id, quantity, date")
             .in("item_id", itemIds);
@@ -1095,7 +1146,7 @@
             console.error("Returned item error:", returnedError.message);
           } else {
             for (const entry of returned) {
-              const matchedItem = items.find(i => i.id === entry.item_id);
+              const matchedItem = items.find((i) => i.id === entry.item_id);
               allMatches.push({
                 name: `${matchedItem.item_name} (Returned: ${entry.quantity})`,
                 page: "returnedissueditem.html",
@@ -1108,11 +1159,15 @@
         // Display results
         if (allMatches.length > 0) {
           const limited = allMatches.slice(0, 15);
-          resultBox.innerHTML = limited.map(item => `
+          resultBox.innerHTML = limited
+            .map(
+              (item) => `
             <a href="${item.page}">
               🔍 ${item.name} - ${item.label}
             </a>
-          `).join("");
+          `,
+            )
+            .join("");
           resultBox.style.display = "block";
         } else {
           resultBox.innerHTML = `<p style="padding:8px;">No results found.</p>`;
@@ -1131,6 +1186,5 @@
         searchInput.value = "";
       });
     </script>
-
   </body>
 </html>
