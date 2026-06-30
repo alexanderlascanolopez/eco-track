@@ -852,20 +852,25 @@
         });
 
         if (confirm.isConfirmed) {
+          console.log("Deleting category with ID:", id);
           const { error } = await supabaseClient
             .from("category")
             .delete()
             .eq("id", id);
 
-          if (error) {
-            Swal.fire("Error", error.message, "error");
-          } else {
-            Swal.fire("Deleted!", "Category has been deleted.", "success").then(
-              () => {
-                window.location.href = "categorylist.html";
-              },
-            );
+          if (!error) {
+            window.location.href = "categorylist.html";
           }
+
+          // if (error) {
+          //   Swal.fire("Error", error.message, "error");
+          // } else {
+          //   Swal.fire("Deleted!", "Category has been deleted.", "success").then(
+          //     () => {
+          //       window.location.href = "categorylist.html";
+          //     },
+          //   );
+          // }
         }
       }
 
