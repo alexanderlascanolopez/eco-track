@@ -456,7 +456,7 @@
                               </select>
                             </div>
                           </div>
-                          <div class="col-lg-3 col-sm-6 col-12">
+                          <!-- <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Date </label>
                               <div class="input-groupicon">
@@ -475,7 +475,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </form>
                     </div>
@@ -547,7 +547,7 @@
                               <input type="text" id="returned_by" required />
                             </div>
                           </div>
-                          <div class="col-lg-3 col-sm-6 col-12">
+                          <!-- <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Date </label>
                               <div class="input-groupicon">
@@ -566,7 +566,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </form>
                     </div>
@@ -924,7 +924,7 @@
 
         const quantity = document.getElementById("quantity2");
         const returned_by = document.getElementById("returned_by");
-        const date = document.getElementById("date2");
+        // const date = document.getElementById("date2");
         quantity.max = issuedItemData.quantity;
         document.getElementById("quantityLimit2").textContent =
           `Max value: ${issuedItemData.quantity - totalReturned} (based on issued item quantity and/or returned issued item quantity.)`;
@@ -951,7 +951,7 @@
                   issued_item_quantity_id: issued_id,
                   quantity: quantity.value,
                   returned_by: returned_by.value,
-                  date: formatDate(date.value),
+                  // date: formatDate(date.value),
                 },
               ]);
 
@@ -1051,21 +1051,21 @@
         const modal = document.getElementById("userModal");
         if (modal.style.display === "block") {
           document.getElementById("quantity").disabled = false;
-          document.getElementById("date").disabled = false;
+          // document.getElementById("date").disabled = false;
           document.getElementById("quantity").value = data.quantity || "";
           document.getElementById("quantity").max =
             totalItem - totalIssued + data.quantity;
           document.getElementById("purpose_of_issuance").value =
             data.purpose_of_issuance || "";
           document.getElementById("status").value = data.status || "";
-          document.getElementById("date").value = data.date.split("T")[0] || "";
+          // document.getElementById("date").value = data.date.split("T")[0] || "";
           document.getElementById("quantityLimit").textContent =
             `Max value: ${totalItem - totalIssued + data.quantity} (based on instock items)`;
         }
 
         if (totalReturned) {
           document.getElementById("quantity").disabled = true;
-          document.getElementById("date").disabled = true;
+          // document.getElementById("date").disabled = true;
           document.getElementById("quantityLimit").textContent =
             "You cannot update the quantity. It has returned issued items already.";
         }
@@ -1085,7 +1085,7 @@
                 "purpose_of_issuance",
               ).value,
               status: document.getElementById("status").value,
-              date: formatDate(document.getElementById("date").value),
+              // date: formatDate(document.getElementById("date").value),
             };
 
             const { error: updateError } = await supabaseClient
@@ -1219,7 +1219,7 @@
                 <td>${issueditem.quantity}</td>
                 <td><a href="./returnedissueditem.html">${totalReturned}</a></td>
                 <td>${issueditem.issued_to}</td>
-                <td>${issueditem.date.split("T")[0]}</td>
+                <td>${issueditem.created_at.split("T")[0]}</td>
                 <td class="no-export">
                   <button
                   class="me-3"

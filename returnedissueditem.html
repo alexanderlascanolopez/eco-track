@@ -438,7 +438,7 @@
                               <input type="text" id="returned_by" required />
                             </div>
                           </div>
-                          <div class="col-lg-3 col-sm-6 col-12">
+                          <!-- <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Date</label>
                               <div class="input-groupicon">
@@ -457,7 +457,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </form>
                     </div>
@@ -830,7 +830,7 @@
         if (modal.style.display === "block") {
           document.getElementById("quantity").value = data.quantity || "";
           document.getElementById("returned_by").value = data.returned_by || "";
-          document.getElementById("date").value = data.date.split("T")[0] || "";
+          // document.getElementById("date").value = data.date.split("T")[0] || "";
           document.getElementById("quantity").max =
             issueditemquantity.quantity - totalReturned + data.quantity;
           document.getElementById("quantityLimit").textContent =
@@ -849,7 +849,7 @@
             const updatedData = {
               quantity: document.getElementById("quantity").value,
               returned_by: document.getElementById("returned_by").value,
-              date: formatDate(document.getElementById("date").value),
+              // date: formatDate(document.getElementById("date").value),
             };
 
             const { error: updateError } = await supabaseClient
@@ -968,7 +968,7 @@
                 <td>${data.item_name}</td>
                 <td>${rissueditem.quantity}</td>
                 <td>${rissueditem.returned_by}</td>
-                <td>${rissueditem.date.split("T")[0]}</td>
+                <td>${rissueditem.created_at.split("T")[0]}</td>
                 <td class="no-export">
                   <button
                     class="me-3 btn-edit-user"

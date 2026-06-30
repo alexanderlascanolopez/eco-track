@@ -449,7 +449,7 @@
                               <input type="text" id="brand" required />
                             </div>
                           </div>
-                          <div class="col-lg-3 col-sm-6 col-12">
+                          <!-- <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Date </label>
                               <div class="input-groupicon">
@@ -468,7 +468,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </form>
                     </div>
@@ -532,7 +532,7 @@
                               ></small>
                             </div>
                           </div>
-                          <div class="col-lg-3 col-sm-6 col-12">
+                          <!-- <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Date </label>
                               <div class="input-groupicon">
@@ -551,7 +551,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </form>
                     </div>
@@ -644,7 +644,7 @@
                               <input type="text" id="issued_to" required />
                             </div>
                           </div>
-                          <div class="col-lg-3 col-sm-6 col-12">
+                          <!-- <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                               <label>Date </label>
                               <div class="input-groupicon">
@@ -663,7 +663,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </form>
                     </div>
@@ -1028,7 +1028,8 @@
     <!-- fetch items -->
     <script>
       function formatDate(d) {
-        const [day, month, year] = d.split("-");
+        const date = d.split("T")[0];
+        const [day, month, year] = date.split("-");
         return `${year}-${month}-${day}`;
       }
 
@@ -1057,9 +1058,9 @@
               .value.trim();
             const status = document.getElementById("status").value.trim();
             const issued_to = document.getElementById("issued_to").value.trim();
-            const date = formatDate(
-              document.getElementById("date3").value.trim(),
-            );
+            // const date = formatDate(
+            //   document.getElementById("date3").value.trim(),
+            // );
 
             const { data, error } = await supabaseClient
               .from("issued item quantity")
@@ -1071,7 +1072,7 @@
                   purpose_of_issuance,
                   status,
                   issued_to,
-                  date,
+                  // date,
                 },
               ]);
 
@@ -1114,9 +1115,9 @@
             submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...`;
 
             const quantity = document.getElementById("quantity2").value.trim();
-            const date = formatDate(
-              document.getElementById("date2").value.trim(),
-            );
+            // const date = formatDate(
+            //   document.getElementById("date2").value.trim(),
+            // );
 
             const { error: insertError } = await supabaseClient
               .from("item quantity")
@@ -1125,7 +1126,7 @@
                   category_id,
                   item_id,
                   quantity,
-                  date,
+                  // date,
                 },
               ]);
 
@@ -1167,6 +1168,7 @@
           console.error("Error fetching item:", error.message);
           return;
         }
+        console.log(data);
 
         const item_name = document.getElementById("item_name");
         const category = document.getElementById("category");
@@ -1176,7 +1178,7 @@
         item_name.value = data.item_name || "";
         category.value = data.category || "";
         brand.value = data.brand || "";
-        date.value = data.date || "";
+        // date.value = formatDate(data.date) || "";
 
         $("#userForm")
           .off("submit")
@@ -1191,7 +1193,7 @@
               item_name: item_name.value,
               category: category.value,
               brand: brand.value,
-              date: date.value,
+              // date: date.value,
             };
 
             const { error: updateError } = await supabaseClient
@@ -1292,7 +1294,7 @@
               <td>${item.category}</td>
               <td>${item.brand}</td>
               <td>${result}</td>
-              <td>${item.date.split("T")[0]}</td>
+              <td>${item.created_at.split("T")[0]}</td>
               
               <td class="no-export">
                 <button
