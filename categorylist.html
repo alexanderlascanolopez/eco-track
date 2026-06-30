@@ -852,7 +852,6 @@
         });
 
         if (confirm.isConfirmed) {
-          console.log("Deleting category with ID:", id);
           const { error } = await supabaseClient
             .from("category")
             .delete()
